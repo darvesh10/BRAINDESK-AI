@@ -5,7 +5,9 @@ import pkg from "yt-dlp-wrap";
 import { YoutubeTranscript } from 'youtube-transcript'; // 👈 Naya backup import
 
 const YTDlpWrap = pkg.default;
-const ytDlp = new YTDlpWrap("./yt-dlp.exe");
+const ytDlp = new YTDlpWrap(
+  path.join(process.cwd(), "yt-dlp.exe")
+);
 
 function extractVideoId(url) {
   const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
