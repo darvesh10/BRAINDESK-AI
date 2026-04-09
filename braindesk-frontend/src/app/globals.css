@@ -1,0 +1,112 @@
+@import "tailwindcss";
+
+/* 1. TAILWIND KO BATAO KI COLORS DYNAMIC HAIN */
+@theme {
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --color-border: var(--border);
+
+  --color-card: var(--card);
+  --color-hover: var(--hover);
+  --color-muted: var(--muted);
+
+  --color-accent: #7c6ef5;
+  --color-accent-light: #a99ff8;
+  --color-amber: #f59e0b;
+}
+
+/* 2. DEFAULT (DARK MODE) COLORS */
+:root, .dark {
+  --bg: #0c0c0e;
+  --text: #ececf1;
+  --border: #202024;
+  --card: #131316;
+  --hover: #1e1e24;
+  --muted: #9ca3af;
+}
+
+/* 3. 🌞 LIGHT MODE COLORS */
+.light {
+  --bg: #f8fafc;
+  --text: #0f172a;
+  --border: #e2e8f0;
+  --card: #ffffff;
+  --hover: #f1f5f9;
+  --muted: #475569;
+}
+
+/* 4. 🌘 DIM MODE COLORS (Twitter Style) */
+.dim {
+  --bg: #15202b;
+  --text: #ffffff;
+  --border: #38444d;
+  --card: #192734;
+  --hover: #22303c;
+  --muted: #8b98a5;
+}
+
+/* BASE RULES WITH SMOOTH TRANSITION */
+html, body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: sans-serif;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* GRID BACKGROUND */
+.grid-overlay {
+  background-image:
+    linear-gradient(rgba(124, 110, 245, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124, 110, 245, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* SEXY BUTTON */
+.brain-btn {
+  background: linear-gradient(to right, #7c6ef5, #a99ff8);
+  color: white;
+  font-weight: 600;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 20px rgba(124, 110, 245, 0.3);
+}
+.brain-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(124, 110, 245, 0.6);
+}
+
+
+/*  MARKDOWN TABLES  */
+.ai-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.875rem;
+  text-align: left;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.ai-prose th {
+  background: var(--bg-hover);
+  padding: 12px 16px;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  border-bottom: 2px solid var(--border);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+.ai-prose td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-primary);
+}
+.ai-prose tr:last-child td {
+  border-bottom: none;
+}
+.ai-prose tr:hover td {
+  background: var(--bg-secondary);
+}

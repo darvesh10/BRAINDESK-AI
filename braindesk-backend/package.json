@@ -1,0 +1,50 @@
+{
+  "name": "braindesk-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "0.40.1",
+    "@azure/identity": "^4.13.0",
+    "@azure/search-documents": "^12.1.0",
+    "@google/genai": "^1.44.0",
+    "@langchain/core": "^1.1.30",
+    "@langchain/openai": "^1.2.12",
+    "@mistralai/mistralai": "^1.14.1",
+    "@openai/agents": "^0.5.3",
+    "@qdrant/js-client-rest": "1.17.0",
+    "@supabase/supabase-js": "^2.45.0",
+    "axios": "^1.13.6",
+    "bcryptjs": "^3.0.3",
+    "cloudflare": "^5.2.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "crypto": "^1.0.1",
+    "dotenv": "^17.3.1",
+    "express": "^5.0.0",
+    "groq-sdk": "^0.37.0",
+    "jsonwebtoken": "^9.0.3",
+    "mem0ai": "^2.2.4",
+    "mongoose": "^9.0.0",
+    "multer": "^2.1.1",
+    "neo4j-driver": "^6.0.1",
+    "ollama": "^0.6.3",
+    "openai": "^4.0.0",
+    "pdf-parse": "^2.4.5",
+    "pdfjs-dist": "^5.5.207",
+    "redis": "^4.6.0",
+    "sqlite3": "^5.1.7",
+    "youtube-captions-scraper": "^2.0.3",
+    "youtube-transcript": "^1.2.1",
+    "yt-dlp-wrap": "^2.3.12",
+    "zod": "^3.23.0"
+  },
+  "overrides": {
+    "@anthropic-ai/sdk": "0.40.1",
+    "@qdrant/js-client-rest": "1.17.0"
+  }
+}
