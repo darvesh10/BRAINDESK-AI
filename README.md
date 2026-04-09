@@ -14,39 +14,32 @@
 
 <br/>
 
-> **🚀 Watch the Full Demo Video:** [Link to your YouTube/Drive Video here]
+> **🚀 Watch the Demo:** [Watch on YouTube / Insert Video Link Here]
 
-## ⚡ The Problem vs. The Solution
+## ⚡ The Engineering Challenge
 
-As developers, we constantly context-switch. We write code in our IDE, push to GitHub, test APIs in Postman, and ask questions on ChatGPT. This fragmentation breaks the flow state. 
+While powerful AI developer tools exist in the market, **BrainDesk AI was built as an intensive engineering playground** to deeply understand Agentic Architecture, Vector Databases, and secure external tool integrations (OAuth). 
 
-**BrainDesk AI** is an experimental architecture built to solve this. It is a stateful, agentic workspace where specialized AI agents autonomously handle domain-specific tasks (API Testing, Git operations, RAG-based context retrieval) while you stay in one unified interface.
+Instead of relying on a single, monolithic LLM prompt that gets easily confused, BrainDesk utilizes a **Multi-Agent Orchestration** pattern. It breaks down complex developer tasks into isolated, highly specialized agents working under a central router.
 
 ---
 
 ## 🏗️ High-Level System Architecture
 
-BrainDesk doesn't use a massive, confused LLM. It uses a **Multi-Agent Orchestration** pattern. A central Gateway (Triage Agent) intercepts the user's prompt and routes it to the most capable specialized agent.
+This flowchart represents the data flow of a user request. The **Triage Agent** acts as the gateway—it never answers queries directly. Instead, it analyzes the user's intent and autonomously routes the payload to the specific agent equipped with the right tools.
 
 ```mermaid
 graph TD
-    User([👨‍💻 User]) --> |Prompt / File Upload| UI[Next.js Frontend]
-    UI --> |REST API| Gateway[Express.js Backend]
+    User([👨‍💻 User Request]) --> UI[Next.js Frontend]
+    UI --> Backend[Express.js Backend]
     
-    Gateway --> |Intent Analysis| Triage[🕵️ Master Triage Agent]
+    Backend --> Triage{🕵️ Master Triage Agent}
     
-    Triage --> |"Test this endpoint"| QA[🧪 QA Automation Agent]
-    Triage --> |"Push this code"| Git[🐙 GitHub Automator Agent]
-    Triage --> |"Summarize this PDF/Video"| RAG[📚 RAG Tutor Agent]
-    Triage --> |"General Chat"| Normal[💬 Assistant Agent]
+    Triage -->|Intent: Code/Repo| Git[🐙 GitHub Automator]
+    Triage -->|Intent: API Test| QA[🧪 QA Automation Agent]
+    Triage -->|Intent: PDF/Video/Search| RAG[📚 RAG Knowledge Agent]
+    Triage -->|Intent: Chat| Normal[💬 Assistant Agent]
 
-    QA --> |Executes HTTP Requests| TargetServer[(Target APIs)]
-    Git --> |OAuth 2.0 Token| GitHubAPI[(GitHub API)]
-    
-    RAG --> |Embeddings Extraction| TextExtract[PDF / YouTube Parsers]
-    TextExtract --> |HNSW / ANN Search| Qdrant[(Qdrant Vector DB)]
-    
-    Gateway --> |User Sessions| Mongo[(MongoDB)]
-
-    classDef agent fill:#f9f,stroke:#333,stroke-width:2px;
-    class Triage,QA,Git,RAG,Normal agent;
+    Git --> |OAuth 2.0| GitHubAPI[(GitHub API)]
+    QA --> |HTTP Requests| TargetServer[(Target Local APIs)]
+    RAG --> |Vector Search| Qdrant[(Qdrant Vector DB)]
