@@ -43,7 +43,6 @@ graph TD
     Git --> |OAuth 2.0| GitHubAPI[(GitHub API)]
     QA --> |HTTP Requests| TargetServer[(Target Local APIs)]
     RAG --> |Vector Search| Qdrant[(Qdrant Vector DB)]
-
 ---
 
 ## 🦸‍♂️ The "Avengers" (Agent Capabilities)
