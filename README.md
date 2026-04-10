@@ -111,7 +111,7 @@ BrainDesk AI consists of 5 specialized agents. Each agent is equipped with speci
 
 ### 1. Clone the repository
 ```bash
-git clone [https://github.com/yourusername/braindesk-ai.git](https://github.com/yourusername/braindesk-ai.git)
+git clone [https://github.com/darvesh10/braindesk-ai.git](https://github.com/darvesh10/braindesk-ai.git)
 cd braindesk-ai
 ```
 
