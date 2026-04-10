@@ -44,6 +44,7 @@ graph TD
     QA --> |HTTP Requests| TargetServer[(Target Local APIs)]
     RAG --> |Vector Search| Qdrant[(Qdrant Vector DB)]
 
+
 ```
 
 🦸‍♂️ The "Avengers" (Agent Capabilities)
