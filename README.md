@@ -43,41 +43,123 @@ graph TD
     Git --> |OAuth 2.0| GitHubAPI[(GitHub API)]
     QA --> |HTTP Requests| TargetServer[(Target Local APIs)]
     RAG --> |Vector Search| Qdrant[(Qdrant Vector DB)]
-
 ```
 
-🦸‍♂️ The "Avengers" (Agent Capabilities)
+---
+
+## 🧠 Core Engineering Decisions
+
+### 1. Vector DB vs. NoSQL for Semantic Memory
+Instead of storing user notes and PDF texts in MongoDB, BrainDesk utilizes **Qdrant Vector Database**. 
+* **Why?** MongoDB excels at lexical (exact keyword) search, but fails at contextual meaning. By generating embeddings and using Qdrant's **HNSW (Hierarchical Navigable Small World)** algorithm, the RAG agent can perform Approximate Nearest Neighbor (ANN) searches. This allows the agent to retrieve exact historical context even if the user asks a vaguely worded question.
+
+### 2. Preventing Orchestrator Crashes during Automated QA
+When the QA Agent tests an API, it intentionally injects bad data to find edge cases. 
+* **The Challenge:** Native HTTP clients throw exceptions on 4xx/5xx status codes, which would crash the Node.js backend.
+* **The Solution:** I engineered a custom Axios wrapper bypassing default error throwing (`validateStatus: () => true`). This intercepts server crashes and passes the raw error payloads directly back to the Agent, allowing it to generate dynamic Markdown bug reports without breaking the server loop.
+
+---
+
+## 🤖 The Agent Ecosystem (Capabilities)
+
 BrainDesk AI consists of 5 specialized agents. Each agent is equipped with specific tools and strict instructions to handle a dedicated domain.
 
-1. 🕵️ Master Triage Agent (The Router)
-Role: The brain of the operation. It never answers user queries directly.
+### 1. 🕵️ Master Triage Agent (The Router)
+* **Role:** The brain of the operation. It never answers user queries directly.
+* **Mechanism:** It analyzes the user's prompt (and any attached file contexts) and strictly routes the payload to the appropriate sub-agent. It enforces safety by preventing cross-domain confusion (e.g., stopping the GitHub agent from trying to read a PDF).
 
-Mechanism: It analyzes the user's prompt (and any attached file contexts) and strictly routes the payload to the appropriate sub-agent. It enforces safety by preventing cross-domain confusion (e.g., stopping the GitHub agent from trying to read a PDF).
+### 2. 📚 RAG Knowledge Agent (Semantic Memory)
+* **Role:** Handles document ingestion and semantic information retrieval.
+* **Mechanism:** When a user uploads a PDF or provides a YouTube link, this agent (via the backend) extracts the text, chunks it, and stores the embeddings in **Qdrant**. When asked a question, it uses the `search_knowledge` tool to perform Approximate Nearest Neighbor (ANN) search, ensuring it answers *only* from the user's context, mitigating LLM hallucinations.
 
-2. 📚 RAG Knowledge Agent (Semantic Memory)
-Role: Handles document ingestion and semantic information retrieval.
+### 3. 🧪 QA Automation Agent (The Tester)
+* **Role:** Intelligent, stateful API testing.
+* **Mechanism:** Capable of hitting both local (`localhost`) and production APIs. It doesn't just ping endpoints; it:
+  1. Deduces the required JSON schema based on the endpoint name.
+  2. Generates randomized test data (to avoid database duplication errors).
+  3. **Chains Requests:** Registers a user, saves the credentials in memory, and immediately tests the Login API using those exact credentials.
+  4. Generates a highly professional Markdown Test Report, catching edge cases and backend crashes (500 errors).
 
-Mechanism: When a user uploads a PDF or provides a YouTube link, this agent (via the backend) extracts the text, chunks it, and stores the embeddings in Qdrant. When asked a question, it uses the search_knowledge tool to perform Approximate Nearest Neighbor (ANN) search, ensuring it answers only from the user's context, mitigating LLM hallucinations.
+### 4. 🐙 GitHub Automator Agent (The DevOps Engineer)
+* **Role:** Directly interacts with the user's GitHub repositories.
+* **Mechanism:** Integrated via GitHub OAuth 2.0. By using custom tools (`github_read_file`, `github_push_file`), it can autonomously create, update, or delete specific files in a repository. 
+* **Safety Guardrail:** Hardcoded instructions completely restrict the agent from deleting entire repositories, ensuring destructive actions are blocked.
 
-3. 🧪 QA Automation Agent (The Tester)
-Role: Intelligent, stateful API testing.
+### 5. 💬 BrainDesk Assistant (The Fallback)
+* **Role:** Standard conversational agent for general programming queries, debugging raw code snippets, and casual interactions when no specific tools are required.
 
-Mechanism: Capable of hitting both local (localhost) and production APIs. It doesn't just ping endpoints; it:
+---
 
-Deduces the required JSON schema based on the endpoint name.
+## 💻 Tech Stack
 
-Generates randomized test data (to avoid database duplication errors).
+* **Frontend:** Next.js (App Router), Tailwind CSS, Framer Motion
+* **Backend:** Node.js, Express.js
+* **Database:** MongoDB (User Data & Chat History)
+* **Vector Database:** Qdrant (Embeddings & Semantic Search)
+* **AI Models & Framework:** OpenAI (gpt-4o-mini, text-embedding-3-small)
 
-Chains Requests: Registers a user, saves the credentials in memory, and immediately tests the Login API using those exact credentials.
+---
 
-Generates a highly professional Markdown Test Report, catching edge cases and backend crashes (500 errors).
+## 🛠️ Getting Started (Local Setup)
 
-4. 🐙 GitHub Automator Agent (The DevOps Engineer)
-Role: Directly interacts with the user's GitHub repositories.
+### Prerequisites
+* Node.js (v18+)
+* MongoDB URI
+* Qdrant Cluster URL & API Key
+* OpenAI API Key
+* GitHub OAuth App Credentials (Client ID & Secret)
 
-Mechanism: Integrated via GitHub OAuth 2.0. By using custom tools (github_read_file, github_push_file), it can autonomously create, update, or delete specific files in a repository.
+### 1. Clone the repository
+```bash
+git clone [https://github.com/yourusername/braindesk-ai.git](https://github.com/yourusername/braindesk-ai.git)
+cd braindesk-ai
+```
 
-Safety Guardrail: Hardcoded instructions completely restrict the agent from deleting entire repositories, ensuring destructive actions are blocked.
+### 2. Setup Backend
+```bash
+cd braindesk-backend
+npm install
+```
+Create a `.env` file in the backend folder:
+```env
+PORT=5000
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+OPENAI_API_KEY=your_openai_api_key
+QDRANT_URL=your_qdrant_cluster_url
+QDRANT_API_KEY=your_qdrant_api_key
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+FRONTEND_URL=http://localhost:3000
+```
+Run the backend:
+```bash
+npm run dev
+```
 
-5. 💬 BrainDesk Assistant (The Fallback)
-Role: Standard conversational agent for general programming queries, debugging raw code snippets, and casual interactions when no specific tools are required.
+### 3. Setup Frontend
+Open a new terminal window:
+```bash
+cd braindesk-frontend
+npm install
+```
+Create a `.env.local` file in the frontend folder:
+```env
+NEXT_PUBLIC_BACKEND_URL=http://localhost:5000
+```
+Run the frontend:
+```bash
+npm run dev
+```
+Visit `http://localhost:3000` to start exploring BrainDesk AI.
+
+---
+
+## 🗺️ Future Roadmap
+* **Mass Auto-API Testing:** Automatically extract routes from an uploaded backend file and execute tests dynamically.
+* **Credit System:** Razorpay integration for tracking and limiting LLM usage.
+* **Automated PR Reviewer:** Agent automatically reviews latest commits and finds bugs.
+
+<div align="center">
+  <i>Built with ❤️ for pushing the boundaries of AI integrations.</i>
+</div>
