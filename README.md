@@ -58,6 +58,11 @@ When the QA Agent tests an API, it intentionally injects bad data to find edge c
 * **The Challenge:** Native HTTP clients throw exceptions on 4xx/5xx status codes, which would crash the Node.js backend.
 * **The Solution:** I engineered a custom Axios wrapper bypassing default error throwing (`validateStatus: () => true`). This intercepts server crashes and passes the raw error payloads directly back to the Agent, allowing it to generate dynamic Markdown bug reports without breaking the server loop.
 
+### 3. Cost & Latency Optimization via Memoization
+* **The Problem:** Repeated complex user queries or identical document searches would trigger duplicate LLM and Qdrant calls, wasting API credits and increasing response time.
+* **The Solution:** I implemented an in-memory caching/memoization layer for casual words and repetitive lookups. This short-circuits the API loop and instantly serves cached responses for identical inputs, saving costs and heavily reducing user latency.
+
+
 ---
 
 ## 🤖 The Agent Ecosystem (Capabilities)
