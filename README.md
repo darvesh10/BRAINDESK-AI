@@ -58,9 +58,10 @@ When the QA Agent tests an API, it intentionally injects bad data to find edge c
 * **The Challenge:** Native HTTP clients throw exceptions on 4xx/5xx status codes, which would crash the Node.js backend.
 * **The Solution:** I engineered a custom Axios wrapper bypassing default error throwing (`validateStatus: () => true`). This intercepts server crashes and passes the raw error payloads directly back to the Agent, allowing it to generate dynamic Markdown bug reports without breaking the server loop.
 
-### 3. Cost & Latency Optimization via Memoization
-* **The Problem:** Repeated complex user queries or identical document searches would trigger duplicate LLM and Qdrant calls, wasting API credits and increasing response time.
-* **The Solution:** I implemented an in-memory caching/memoization layer for casual words and repetitive lookups. This short-circuits the API loop and instantly serves cached responses for identical inputs, saving costs and heavily reducing user latency.
+### 3. Hyper-Personalization using Mem0 (Long-Term AI Memory)
+* **The Problem:** In traditional chatbots, if a user states their tech stack or API ports in session 1, session 2 forgets it completely unless it is manually re-entered. Passing heavy chat logs to the LLM every time wastes API credits and increases latency.
+* **The Solution:** Whenever a message is sent, the controller calls `mem0.search()` to retrieve established facts mapped to that specific user ID. These extracted "User Facts" are injected as a context prompt directly into the Triage Agent. At the end of the execution loop, the system extracts new facts from the current conversation and saves them back to Mem0 permanently.
+
 
 
 ---
