@@ -1,205 +1,224 @@
-# 🧠 BrainDesk AI
+# 🎨 BrainDesk AI Frontend
 
-An intelligent AI workspace for developers that combines **multi-agent automation**, **dual-layer memory**, **Universal RAG**, **GitHub automation**, and **automated API testing** — all inside a single unified chat interface.
+### A Modern AI Workspace UI for Multi-Agent Systems
 
 ---
 
 ## 🚀 Overview
 
-BrainDesk AI is designed to eliminate context switching and tool fragmentation for developers.
+The BrainDesk AI Frontend is a **modern, interactive developer workspace UI** built with Next.js. It enables seamless interaction with a powerful multi-agent backend system, allowing users to perform tasks like API testing, GitHub automation, and knowledge retrieval — all through a single chat interface.
 
-Instead of using multiple platforms for:
-
-* Chatbots
-* Code tools
-* API testing tools
-* Documentation memory
-
-👉 BrainDesk brings everything into **one AI-powered workspace**.
+This frontend focuses on **developer experience, smooth UX, and intelligent interaction design**.
 
 ---
 
-## ✨ Core Features
+## ⚙️ Key Features
 
-### 🧠 Multi-Agent System
+### 💬 Unified Chat Interface
 
-* Smart triage agent automatically routes requests
-* No need to manually choose agents
-* Everything works in **one chat interface**
-
----
-
-### 📚 Universal RAG (Knowledge System)
-
-* Save:
-
-  * YouTube videos 🎥
-  * PDFs 📄
-  * Raw text 📝
-* Ask follow-up questions anytime
-* Uses vector search (Qdrant) + embeddings
+* Single chat interface to interact with all AI agents
+* Supports Markdown rendering for structured AI responses
+* Real-time typing indicators and smooth message animations
 
 ---
 
-### 🧠 Dual-Layer Memory
+### 🧠 Multi-Agent Interaction (via Backend)
 
-* **Mem0** → stores long-term user behavior
-* **Qdrant** → stores knowledge documents
-* Enables:
+* Automatically routes queries to:
 
-  * Context-aware replies
-  * Personalized AI responses
+  * RAG Agent (knowledge)
+  * QA Agent (API testing)
+  * GitHub Agent (automation)
+  * Assistant Agent (general queries)
+
+👉 Frontend sends user input → backend handles agent orchestration
 
 ---
 
-### 🐙 GitHub Automation
+### 📂 File Upload System
+
+* Upload up to 2 files (PDF/Text)
+* Files are processed via backend RAG pipeline
+* Injects system context for AI understanding
+
+Example:
+
+```
+[System Context: User has uploaded files...]
+```
+
+---
+
+### 🗂️ Chat History Management
+
+* View all past chats
+* Load previous conversations
+* Delete chats dynamically
+
+---
+
+### 🔗 GitHub Integration
 
 * Connect GitHub via OAuth
-* AI can:
-
-  * Read files
-  * Modify code
-  * Push commits
-* Fully automated developer workflow
+* Enables AI-powered code automation
+* Visual status: Connected / Not Connected
 
 ---
 
-### 🧪 Automated API Testing
+### 🎨 Advanced UI/UX
 
-* Provide API endpoint
-* AI automatically:
-
-  * Generates payload
-  * Runs test cases
-  * Creates professional test report
+* Smooth animations (Framer Motion)
+* Responsive design
+* Sidebar navigation
+* Agent hint cards for better UX
 
 ---
 
-## 🎨 UI Highlights
+### 🌗 Theme System
 
-* Modern SaaS UI (inspired by Vercel / Linear)
-* Dark / Light / Dim modes 🌗
-* Sidebar with:
+* Supports 3 modes:
 
-  * Chat history
-  * Delete chats
-* ChatGPT-like smooth UX
-* File upload (PDF / text)
-* Animated AI responses
-* Tooltip-based feature guidance
+  * Light
+  * Dim
+  * Dark
+* Persisted using localStorage
+
+---
+
+## 🧩 Pages Overview
+
+### 🏠 Landing Page
+
+* Explains product vision and features
+* Animated sections with storytelling
+* CTA for onboarding
+
+---
+
+### 🔐 Auth Page
+
+* Login / Register system
+* Google OAuth integration
+* Clean SaaS-style UI
+
+---
+
+### 💬 Chat Page (Core)
+
+* Main AI interaction interface
+* Handles:
+
+  * Chat messages
+  * File uploads
+  * GitHub connection
+  * Session management
+
+---
+
+### 🚀 Updates Page
+
+* Displays upcoming features
+* Shows product roadmap
+* Enhances product storytelling
+
+---
+
+## 🔌 API Integration
+
+* Axios-based API layer
+* Centralized configuration
+* Cookie-based authentication
+
+### Special Features:
+
+* `withCredentials: true` for cookies
+* Token auto-injection via interceptor
+
+---
+
+## 🏗️ Architecture
+
+```
+User → UI (Next.js Frontend)
+     → API Layer (Axios)
+     → Backend (Express)
+     → Multi-Agent System
+     → Response → UI Render
+```
 
 ---
 
 ## 🧰 Tech Stack
 
-### Frontend
+### Frontend Framework
 
 * Next.js (App Router)
-* Tailwind CSS v4
+
+### Styling
+
+* Tailwind CSS
+
+### Animations
+
 * Framer Motion
-* Lucide Icons
 
-### Backend
+### Icons
 
-* Node.js + Express
-* MongoDB (Chat storage)
-* Mem0 (Long-term memory)
-* Qdrant (Vector DB)
+* Lucide React
 
-### AI
+### API Communication
 
-* OpenAI Agents SDK
-* Multi-Agent Architecture
-* Tool-based execution (GitHub, API testing, RAG)
+* Axios
 
 ---
 
-## 📂 Project Structure
+## 🧠 Design Principles
+
+* **Chat-first UX** → Everything happens in one interface
+* **Minimal context switching** → No multiple dashboards
+* **Agent abstraction** → User doesn’t need to know internal system
+* **Developer-focused design** → Clean, fast, and intuitive
+
+---
+
+## 🧪 Example Use Cases
+
+* 💬 Ask coding questions
+* 📄 Upload PDF and query it
+* 🔍 Analyze YouTube content (via backend)
+* 🧪 Test backend APIs
+* 🐙 Automate GitHub tasks
+
+---
+
+## 🚀 Getting Started
+
+### 1. Install dependencies
 
 ```
-braindesk/
-│
-├── frontend/     # Next.js App
-├── backend/      # Express API
-│
-└── README.md
+npm install
+```
+
+### 2. Run development server
+
+```
+npm run dev
+```
+
+### 3. Open in browser
+
+```
+http://localhost:3000
 ```
 
 ---
 
-## ⚙️ How It Works
+## 🔮 Future Enhancements
 
-1. User sends a message
-2. Triage Agent analyzes intent
-3. Routes to one agent:
-
-   * GitHub Agent
-   * RAG Agent
-   * API Testing Agent
-   * Normal Assistant
-4. Tools execute tasks
-5. Response returned to UI
-6. Memory stored for future context
-
----
-
-## 📈 5 Days Progress
-
-### ✅ Day 1
-
-* Project setup (Next.js + Express)
-* Basic chat UI created
-* API integration started
-
-### ✅ Day 2
-
-* Backend chat system implemented
-* MongoDB chat storage
-* Session-based messaging
-
-### ✅ Day 3
-
-* Multi-agent architecture added
-* Triage agent implemented
-* OpenAI agent workflow integrated
-
-### ✅ Day 4
-
-* RAG system added (Qdrant)
-* Mem0 integration for memory
-* YouTube / PDF / text saving system
-
-### ✅ Day 5
-
-* Advanced UI redesign (premium SaaS)
-* Chat history + delete feature
-* File upload UI
-* GitHub connect UI
-* Theme system (light / dim / dark)
-
----
-
-## 🔮 Upcoming (In Progress)
-
-* Full GitHub automation execution
-* API testing report UI visualization
-* AI bug finder agent 🕵️‍♂️
-* Deployment (Vercel + Render)
-* Performance optimization
-* Team collaboration features
-
----
-
-## 📌 Vision
-
-To build a **developer-first AI workspace** where:
-
-* Coding
-* Testing
-* Learning
-* Automation
-
-👉 all happen in **one intelligent system**
+* Voice-based interaction
+* Real-time streaming responses
+* Advanced UI dashboards
+* Multi-agent visualization
 
 ---
 
@@ -211,6 +230,9 @@ To build a **developer-first AI workspace** where:
 
 ## ⭐ Final Note
 
-This is not just a chatbot.
+This frontend is designed as a **next-generation developer interface**, combining AI, automation, and memory into a single seamless experience.
 
-👉 This is a **Developer AI Operating System**.
+It transforms complex multi-agent systems into a **simple, intuitive chat-driven workflow**.
+
+---
+
