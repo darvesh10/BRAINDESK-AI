@@ -55,3 +55,52 @@ Agents cannot interact with the real world without tools. These custom JavaScrip
 
 ---
 
+
+## 🔐 Security Highlights
+
+* HTTP-only cookies
+* Password hashing (bcrypt)
+* OAuth integrations
+* No destructive GitHub actions (repo delete restricted)
+
+---
+
+## 📂 Project Structure (Simplified)
+
+```
+/controllers   → Auth, Chat, Document logic  
+/agents        → AI agents (Triage, QA, RAG, etc.)  
+/tools         → GitHub, API tester, YouTube, PDF  
+/services      → RAG logic (embeddings, Qdrant)  
+/routes        → API routes  
+/config        → DB & environment setup  
+```
+
+---
+
+## 🚀 Getting Started
+
+### 1. Install dependencies
+
+```
+npm install
+```
+
+### 3. Run the server
+
+```
+npm run dev
+```
+
+---
+
+## 🔮 Future Improvements
+
+* Multi-agent collaboration chains
+* UI for agent workflows
+* Advanced memory tuning
+* Autonomous debugging agent
+
+---
+
+
