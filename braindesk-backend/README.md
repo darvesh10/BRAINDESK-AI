@@ -1,63 +1,57 @@
-# BrainDesk AI 🧠 (Multi-Agent Hybrid Memory System)
+# 🧠 BrainDesk AI - Backend Orchestrator
 
-An intelligent AI workspace that combines conversational agents, dual-layer long-term memory, Universal RAG, and live GitHub automation and api testing full automated into a single developer productivity platform.
-
----
-
-## 📌 Vision
-BrainDesk AI is designed to be the ultimate intelligent co-pilot for developers. It goes beyond a simple chatbot by integrating:
-- **Multi-Agent Orchestration:** Specialized agents (Router, RAG, Automator) for complex task handling.
-- **Dual-Layer Memory:** Implicit long-term semantic memory (Mem0) + Explicit knowledge base (Qdrant).
-- **Live GitHub Automation:** OAuth 2.0 integrated agent capable of reading, writing, and managing repositories autonomously.
-- **Universal RAG Pipeline:** Ingests and queries data from PDFs, YouTube videos, and raw text snippets.
+This is the core intelligence engine of BrainDesk AI. It is a Node.js/Express application that manages multi-agent orchestration, RAG (Retrieval-Augmented Generation), and secure integration with external tools like GitHub and YouTube.
 
 ---
 
-## 🚀 Core Capabilities
+## 🏗️ Backend Architecture Overview
 
-### 🤖 The Tri-Agent Architecture
-- **Triage (Router) Agent:** An LLM-based gateway that dynamically routes user queries to specialized agents without hardcoded `if/else` logic.
-- **RAG Tutor Agent:** Parses user's uploaded documents and videos, enforcing a strict "Context vs. Explanation" response protocol.
-- **Automator Action Agent:** Connects securely to GitHub APIs to read existing code, apply logical AI updates, and push commits directly to repos.
+The backend follows a strict **Modular & Controller-Agent-Tool** pattern to prevent tight coupling and ensure high scalability.
 
-### 🧠 Dual-Layer Memory System
-- **Implicit Memory (Mem0):** Automatically extracts and stores user preferences, technical stack, and conversational context across sessions.
-- **Explicit Memory (Qdrant Vector DB):** High-performance semantic retrieval for heavy documents, PDFs, and chunked YouTube transcripts.
+### 1. Controllers (The Gateways)
+*   **`chatController.js`** 🔥: Manages the active chat stream. It intercepts the user message, queries **Mem0** for long-term user facts, builds the context prompt, executes the `triageAgent`, and saves the response.
+*   **`authController.js`**: Handles standard Register/Login/Logout along with OAuth 2.0 (GitHub & Google) utilizing secure `httpOnly` cookies and JWT.
+*   **`documentController.js`**: Specifically handles PDF uploads and routes them to the PDF parser tool.
 
-### 🌐 Secure Integrations
-- **GitHub OAuth 2.0:** Secure, token-based authentication flow (No manual PAT copy-pasting).
-- **Safety Guardrails:** Hardcoded AI boundaries preventing destructive actions (e.g., restricted from deleting entire repositories).
+### 2. Services (The Infrastructure)
+*   **`ragService.js`** 🔥🔥: The backbone of our knowledge system. It handles chunking text, generating vectors via OpenAI (`text-embedding-3-small`), storing them in **Qdrant**, and performing ANN (Approximate Nearest Neighbor) searches.
 
 ---
 
-## 🏗️ System Architecture
+## 🤖 The Multi-Agent Ecosystem
 
-| Component | Technology | Purpose |
-| :--- | :--- | :--- |
-| **API Gateway** | Express.js / Node.js | RESTful routing and middleware execution. |
-| **Authentication** | JWT, bcrypt, Cookies/LocalStorage | Secure session management & API protection. |
-| **Agent Orchestration**| OpenAI Agents SDK (`gpt-4o-mini`) | Autonomous decision-making and tool execution. |
-| **Vector Database** | Qdrant | Fast semantic search for the RAG pipeline. |
-| **Document Parsing** | pdfjs-dist, yt-dlp | Extracting text from complex formats. |
+BrainDesk Backend does not rely on a single prompt. It orchestrates specialized agents using strict domain rules.
 
----
+### 1. 🕵️ Triage Agent (The Core Router)
+*   **Purpose:** Decides which agent handles the request.
+*   **Rule:** It *never* answers queries directly. It strictly delegates tasks (YouTube/PDFs -> RAG Agent, APIs -> QA Agent, Code -> Automator Agent).
 
-## 📊 Performance & Cost Optimization
-- ✔ **Vector-based Recall:** Transitioned from full history injection to Top-K semantic recall, reducing LLM token costs by over 40% per request.
-- ✔ **Granular File Updates:** GitHub Agent fetches specific file SHAs to perform targeted `PUT` updates instead of full repo overwrites.
-- ✔ **ESM Compatibility:** Custom ESM-compatible PDF parsing to prevent Node.js memory leaks and dependency clashes.
+### 2. 🧪 QA Agent
+*   **Purpose:** Automated API testing.
+*   **Smart Feature:** It chains stateful requests (Register -> Login) and dynamically generates randomized emails to avoid database duplicate errors.
+*   **Anti-Loop Mechanism:** To prevent infinite loops or burning API tokens, it stops immediately if the target server throws a 500 error.
 
----
+### 3. 📚 RAG Agent
+*   **Purpose:** Context retrieval and data saving.
+*   **Rule:** Strict instructions to stop if YouTube fails and *never* hallucinate or make up fake answers.
 
-## 📅 Development Timeline
-- **Phase 1:** MongoDB Setup, JWT Auth, Bcrypt Hashing & User Isolation.
-- **Phase 2:** OpenAI Agents SDK integration, Triage System & ChatSession persistence.
-- **Phase 3:** Mem0 Long-term Memory & Qdrant Vector-based RAG setup.
-- **Phase 4:** Universal Parsers (YouTube subtitles via `yt-dlp`, PDF parsing).
-- **Phase 5 (Current):** **GitHub OAuth 2.0 & Automator Agent (Read/Push/Delete capabilities).**
-- **Next:** Next.js Full-Stack UI Integration.
+### 4. 🐙 Automator Agent (GitHub AI)
+*   **Rule:** It can read, update, or create files via push. However, a hardcoded guardrail strictly forbids this agent from deleting repositories.
 
 ---
 
-## 👨‍💻 Author
-**Darvesh Soni** *Computer Science Engineering* *Focused on AI Systems, Agentic Architectures, and Full-Stack Development.*
+## 🛠️ Specialized Tools (The Arms of the AI)
+
+Agents cannot interact with the real world without tools. These custom JavaScript tools execute the heavy lifting:
+
+### 1. API Testing Tool ⚙️
+*   **Masterstroke Logic:** Uses Axios with `validateStatus: () => true`. This overrides default error throwing on 4xx/500 status codes, preventing server crashes and allowing the AI to read the raw error response payload.
+
+### 2. YouTube Transcript Tool 🎥
+*   **2-Layer Extraction:** First tries `yt-dlp` for auto-generated subtitles. If that fails, it falls back to the `youtube-transcript` library to ensure high reliability.
+
+### 3. PDF & Text Tools 📄
+*   Uses `pdfjs` to extract text from pages, chunks the clean text, and calls the RAG service to store it directly in Qdrant.
+
+---
+
