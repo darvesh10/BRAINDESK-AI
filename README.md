@@ -23,7 +23,7 @@ Instead of relying on a single, monolithic LLM prompt that gets easily confused,
 
 ---
 
-## 🏗️ High-Level System Architecture
+## 🏗️ High-Level System Architecture,
 
 This flowchart represents the data flow of a user request. The **Triage Agent** acts as the gateway—it never answers queries directly. Instead, it analyzes the user's intent and autonomously routes the payload to the specific agent equipped with the right tools.
 
