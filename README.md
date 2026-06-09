@@ -14,7 +14,9 @@
 
 <br/>
 
-> **🚀 Watch the Demo:** https://drive.google.com/drive/folders/1lB6niRCVBwOLc1g-b2kFUTlATr2TpUH1?usp=sharing
+> 🚀 **Watch the Demo:** [Click Here](https://drive.google.com/file/d/13wpPQPNCRxCDU--V-2xo93U97_X7AY3C/view?usp=sharing)
+> 📸 **View Screenshots:** [Open Gallery](https://drive.google.com/drive/folders/1OAmwaZHsNo4lANdtH6Al73XXtx3OtsZg?usp=sharing)
+
 ## ⚡ The Engineering Challenge
 
 While powerful AI developer tools exist in the market, **BrainDesk AI was built as an intensive engineering playground** to deeply understand Agentic Architecture, Vector Databases, and secure external tool integrations (OAuth). 
