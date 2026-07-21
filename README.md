@@ -14,7 +14,8 @@
 
 <br/>
 
-> **🚀 Watch the Demo:** [Watch on YouTube / Insert Video Link Here]
+> 🚀 **Watch the Demo:** [Click Here](https://drive.google.com/file/d/13wpPQPNCRxCDU--V-2xo93U97_X7AY3C/view?usp=sharing)
+> 📸 **View Screenshots:** [Open Gallery](https://drive.google.com/drive/folders/1OAmwaZHsNo4lANdtH6Al73XXtx3OtsZg?usp=sharing)
 
 ## ⚡ The Engineering Challenge
 
@@ -24,7 +25,7 @@ Instead of relying on a single, monolithic LLM prompt that gets easily confused,
 
 ---
 
-## 🏗️ High-Level System Architecture
+## 🏗️ High-Level System Architecture,
 
 This flowchart represents the data flow of a user request. The **Triage Agent** acts as the gateway—it never answers queries directly. Instead, it analyzes the user's intent and autonomously routes the payload to the specific agent equipped with the right tools.
 
@@ -43,10 +44,30 @@ graph TD
     Git --> |OAuth 2.0| GitHubAPI[(GitHub API)]
     QA --> |HTTP Requests| TargetServer[(Target Local APIs)]
     RAG --> |Vector Search| Qdrant[(Qdrant Vector DB)]
+```
 
 ---
 
-## 🦸‍♂️ The "Avengers" (Agent Capabilities)
+## 🧠 Core Engineering Decisions
+
+### 1. Vector DB vs. NoSQL for Semantic Memory
+Instead of storing user notes and PDF texts in MongoDB, BrainDesk utilizes **Qdrant Vector Database**. 
+* **Why?** MongoDB excels at lexical (exact keyword) search, but fails at contextual meaning. By generating embeddings and using Qdrant's **HNSW (Hierarchical Navigable Small World)** algorithm, the RAG agent can perform Approximate Nearest Neighbor (ANN) searches. This allows the agent to retrieve exact historical context even if the user asks a vaguely worded question.
+
+### 2. Preventing Orchestrator Crashes during Automated QA
+When the QA Agent tests an API, it intentionally injects bad data to find edge cases. 
+* **The Challenge:** Native HTTP clients throw exceptions on 4xx/5xx status codes, which would crash the Node.js backend.
+* **The Solution:** I engineered a custom Axios wrapper bypassing default error throwing (`validateStatus: () => true`). This intercepts server crashes and passes the raw error payloads directly back to the Agent, allowing it to generate dynamic Markdown bug reports without breaking the server loop.
+
+### 3. Hyper-Personalization using Mem0 (Long-Term AI Memory)
+* **The Problem:** In traditional chatbots, if a user states their tech stack or API ports in session 1, session 2 forgets it completely unless it is manually re-entered. Passing heavy chat logs to the LLM every time wastes API credits and increases latency.
+* **The Solution:** Whenever a message is sent, the controller calls `mem0.search()` to retrieve established facts mapped to that specific user ID. These extracted "User Facts" are injected as a context prompt directly into the Triage Agent. At the end of the execution loop, the system extracts new facts from the current conversation and saves them back to Mem0 permanently.
+
+
+
+---
+
+## 🤖 The Agent Ecosystem (Capabilities)
 
 BrainDesk AI consists of 5 specialized agents. Each agent is equipped with specific tools and strict instructions to handle a dedicated domain.
 
@@ -75,3 +96,77 @@ BrainDesk AI consists of 5 specialized agents. Each agent is equipped with speci
 * **Role:** Standard conversational agent for general programming queries, debugging raw code snippets, and casual interactions when no specific tools are required.
 
 ---
+
+## 💻 Tech Stack
+
+* **Frontend:** Next.js (App Router), Tailwind CSS, Framer Motion
+* **Backend:** Node.js, Express.js
+* **Database:** MongoDB (User Data & Chat History)
+* **Vector Database:** Qdrant (Embeddings & Semantic Search)
+* **AI Models & Framework:** OpenAI (gpt-4o-mini, text-embedding-3-small)
+
+---
+
+## 🛠️ Getting Started (Local Setup)
+
+### Prerequisites
+* Node.js (v18+)
+* MongoDB URI
+* Qdrant Cluster URL & API Key
+* OpenAI API Key
+* GitHub OAuth App Credentials (Client ID & Secret)
+
+### 1. Clone the repository
+```bash
+git clone [https://github.com/darvesh10/braindesk-ai.git](https://github.com/darvesh10/braindesk-ai.git)
+cd braindesk-ai
+```
+
+### 2. Setup Backend
+```bash
+cd braindesk-backend
+npm install
+```
+Create a `.env` file in the backend folder:
+```env
+PORT=5000
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+OPENAI_API_KEY=your_openai_api_key
+QDRANT_URL=your_qdrant_cluster_url
+QDRANT_API_KEY=your_qdrant_api_key
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+FRONTEND_URL=http://localhost:3000
+```
+Run the backend:
+```bash
+npm run dev
+```
+
+### 3. Setup Frontend
+Open a new terminal window:
+```bash
+cd braindesk-frontend
+npm install
+```
+Create a `.env.local` file in the frontend folder:
+```env
+NEXT_PUBLIC_BACKEND_URL=http://localhost:5000
+```
+Run the frontend:
+```bash
+npm run dev
+```
+Visit `http://localhost:3000` to start exploring BrainDesk AI.
+
+---
+
+## 🗺️ Future Roadmap
+* **Mass Auto-API Testing:** Automatically extract routes from an uploaded backend file and execute tests dynamically.
+* **Credit System:** Razorpay integration for tracking and limiting LLM usage.
+* **Automated PR Reviewer:** Agent automatically reviews latest commits and finds bugs.
+
+<div align="center">
+  <i>Built with ❤️ for pushing the boundaries of AI integrations.</i>
+</div>
