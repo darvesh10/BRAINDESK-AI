@@ -1,10 +1,11 @@
 import { QdrantClient } from "@qdrant/js-client-rest";
 
 export const qdrant = new QdrantClient({
-    url: process.env.QDRANT_URL || "http://localhost:6333",
-    config:{
-        checkCompatibility: false, // version mismatch ke issues ko ignore karne ke liye
-    }
+    url: process.env.QDRANT_URL,
+    apiKey: process.env.QDRANT_API_KEY,
+    config: {
+        checkCompatibility: false,
+    },
 });
 
 //ye function server start hone se pehle call karna hoga taki collection create ho jaye
