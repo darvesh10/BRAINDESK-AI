@@ -3,16 +3,26 @@ import jwt from "jsonwebtoken";
 import { User } from "../models/User.js";
 import axios from "axios";
 
+const CLIENT_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://braindesk-ai.vercel.app"
+    : "http://localhost:3000";
+
+const SERVER_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://braindesk-ai.onrender.com"
+    : "http://localhost:5000";
+
 const generateToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
 };
 
 // Cookie options (ek baar define karo, dono mein use karo)
 const cookieOptions = {
-  httpOnly: true,      // JS se access nahi hoga (XSS protection)
-  secure: process.env.NODE_ENV === "production", // HTTPS only in prod
-  sameSite: "strict",  // CSRF protection
-  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 
 export const registerUser = async (req, res) => {
@@ -71,7 +81,7 @@ export const githubLogin = (req,res) => {
   const userId = req.query.userId; // Frontend se userId query parameter ke through milega
   if(!userId) return res.status(400).json({ message: "User ID is required" });
   const clientId = process.env.GITHUB_CLIENT_ID;
-  const redirectUri = `http://localhost:5000/api/auth/github/callback`; // GitHub callback URL
+  const redirectUri = `${SERVER_URL}/api/auth/github/callback`; // GitHub callback URL
   const scope = "repo"; // Required scopes
   // GitHub authorization URL banate hain
   const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${userId}`;
@@ -115,7 +125,7 @@ export const githubCallback = async (req, res) => {
     await user.save();
 
     // Sab success hone ke baad user ko wapas frontend pe bhej do (query parameter ke sath taaki UI update ho sake)
-    res.redirect("http://localhost:3000/chat");
+  res.redirect(`${CLIENT_URL}/chat`);
 
   } catch (error) {
     console.error("GitHub OAuth Error:", error.message);
@@ -128,7 +138,7 @@ export const githubCallback = async (req, res) => {
 // 1. Redirect user to Google for authentication
 export const googleLogin = (req, res) => {
   const clientId = process.env.GOOGLE_CLIENT_ID;
-  const redirectUri = `http://localhost:5000/api/auth/google/callback`;
+const redirectUri = `${SERVER_URL}/api/auth/google/callback`;
   const scope = "email profile"; // Humein email aur naam chahiye
   
   // Google authorization URL
@@ -152,7 +162,7 @@ export const googleCallback = async (req, res) => {
         client_id: process.env.GOOGLE_CLIENT_ID,
         client_secret: process.env.GOOGLE_CLIENT_SECRET,
         code,
-        redirect_uri: `http://localhost:5000/api/auth/google/callback`,
+      redirect_uri: `${SERVER_URL}/api/auth/google/callback`,
         grant_type: "authorization_code",
       },
     });
@@ -190,10 +200,10 @@ export const googleCallback = async (req, res) => {
     res.cookie("token", token, cookieOptions);
 
     // F. Sab set! Frontend ke chat page pe phek do
-    res.redirect("http://localhost:3000/chat");
+    res.redirect(`${CLIENT_URL}/chat`);
 
   } catch (error) {
     console.error("Google OAuth Error:", error?.response?.data || error.message);
-    res.redirect("http://localhost:3000/login?error=google-failed");
+    res.redirect(`${CLIENT_URL}/login?error=google-failed`);
   }
 };
